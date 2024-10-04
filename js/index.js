@@ -6,6 +6,14 @@ remainingSecond = remainingSecond % 60;
 return`${hour}hour ${minute}minute ${remainingSecond}second ago`;
 }
 
+const removeActiveClass=()=>{
+const buttons=document.getElementsByClassName("category-btn");
+console.log(buttons);
+for(let btn of buttons){
+    btn.classList.remove("active")
+}
+}
+
 // create loadCategories
 const loadCategories =()=>{
     fetch('https://openapi.programming-hero.com/api/phero-tube/categories')
@@ -29,7 +37,15 @@ const loadCategoryVideo =(id)=>{
     // alert(id);
     fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
     .then(response =>response.json())
-    .then(data => displayVideos(data.category))
+    .then(data =>{
+        // sobaikha active class remove koro
+     removeActiveClass();
+        // id er class k active koro
+        const activeBtn = document.getElementById(`btn-${id}`);
+        activeBtn.classList.add("active");
+       
+        displayVideos(data.category)
+    })
     .catch(error => console.log(error))
 }
 
@@ -77,7 +93,7 @@ card.innerHTML=`
     ${video.authors[0].verified == true ? `<img class="w-5" src="https://img.icons8.com/?size=96&id=D9RtvkuOe31p&format=png"/>`: ""}
     
    </div>
-    <p></p>
+    <p> <button class="btn btn-sm btn-error">details</button></p>
     </div>
 </div>
 `;
@@ -98,7 +114,7 @@ const displayCategories =(categories)=>{
         // create a button
         const buttonContainer =document.createElement('div')
        buttonContainer.innerHTML=`
-       <button onclick="loadCategoryVideo(${item.category_id})" class="btn">
+       <button id="btn-${item.category_id}" onclick="loadCategoryVideo(${item.category_id})" class="btn category-btn">
        ${item.category}
        </button>
        `
