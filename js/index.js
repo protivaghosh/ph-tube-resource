@@ -23,9 +23,34 @@ const loadVideo =()=>{
     .catch(error => console.log(error))
 }
 loadVideo()
+
+
+const loadCategoryVideo =(id)=>{
+    // alert(id);
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then(response =>response.json())
+    .then(data => displayVideos(data.category))
+    .catch(error => console.log(error))
+}
+
 // create displayVideos
 const displayVideos =(videos)=>{
     const videoContainer=document.getElementById('videos');
+    videoContainer.innerHTML="";
+  if(videos.length == 0){
+    videoContainer.classList.remove('grid');
+    videoContainer.innerHTML=`
+    <div class="min-h-[300px] w-full flex flex-col gap-5 items-center justify-center">
+    <img src="assest/Icon.png"/>
+    <h2 class="text-center text-xl font-bold">No Content Here In This Category</h2>
+    </div>
+    `;
+    return;
+
+}else{
+    videoContainer.classList.add('grid');
+}
+
 videos.forEach((video) =>{
 console.log(video);
 const card =document.createElement('div')
@@ -37,7 +62,7 @@ card.innerHTML=`
       class="h-full w-full object-cover"
       alt="Shoes" />
       ${
-        video.others.posted_date?.length == 0? "" :` <span class="absolute right-2 bottom-2 text-white bg-black rounded p-1">${getTimeString(video.others.posted_date)}</span>`
+        video.others.posted_date?.length == 0? "" :` <span class="absolute text-xs right-2 bottom-2 text-white bg-black rounded p-1">${getTimeString(video.others.posted_date)}</span>`
     }
      
   </figure>
@@ -71,11 +96,14 @@ const displayCategories =(categories)=>{
     categories.forEach((item) => {
         console.log(item);
         // create a button
-        const button =document.createElement('button')
-        button.classList="btn";
-        button.innerText=item.category;
+        const buttonContainer =document.createElement('div')
+       buttonContainer.innerHTML=`
+       <button onclick="loadCategoryVideo(${item.category_id})" class="btn">
+       ${item.category}
+       </button>
+       `
 // add button to categories container
-categoryContainer.append(button);
+categoryContainer.append(buttonContainer);
 });
     
 }
